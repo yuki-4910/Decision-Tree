@@ -1,0 +1,1 @@
+{"RISK": {"1": "L", "2": "H"}, "AGE": {"1": "youth", "2": "mid_age", "3": "senior"}, "CRED_HIS": {"1": "poor", "2": "good"}, "INCOME": {"1": "low", "2": "high"}, "RACE": {"1": "white", "2": "asian", "3": "black"}, "HEALTH": {"1": "normal", "2": "poor"}}
