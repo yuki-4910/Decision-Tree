@@ -19,7 +19,6 @@ with open('../data/dataDesc.txt') as f:
     desc = json.load(f)
 
 # print attributes of data
-container = []
 header = []
 for atr in desc:
     header.append(str(atr[0]))
@@ -29,14 +28,12 @@ trainSet = np.transpose(trainSet)
 print(trainSet)
 
 # calculate entropy of Attributes
-
-
-def findEntropyAttri(attribute, trainSet):
+def findEntropyAttri(attributeColumn, trainSet):
     count = {}
     atriEntropy = 0
 
     for row in trainSet:
-        label = row[attribute]
+        label = row[attributeColumn]
         if label not in count:
             count[label] = 0
         count[label] += 1
@@ -45,89 +42,81 @@ def findEntropyAttri(attribute, trainSet):
 
     for label in count:
         print("label", label, "has", count[label], "customers")
-        entropyEle = findEntroyElement(label, attribute, trainSet)
+        entropyEle = findEntropyElement(label, attributeColumn, trainSet)
         atriEntropy += calcEntropyAttributes(
             count[label], len(trainSet), entropyEle)
         print("---------------------------------")
 
-    print("Attribute of", header[attribute], "has entropy of", atriEntropy, )
+    print("Attribute of", header[attributeColumn], "has entropy of", atriEntropy, )
     print("---------------------------------")
     return atriEntropy
 
-# finding the entropy for specific element
-
-
-def findEntroyElement(element, attribute, trainSet):
+# finding the entropy for currentLabel
+def findEntropyElement(currentLabel, attributeColumn, trainSet):
     customers = []
     countClassLabelSet = {}
 
-    # Find cutomers match with current element
+    # Find cutomers match with current currentLabel
     for row in trainSet:
-        label = row[attribute]
-        if label == element:
+        label = row[attributeColumn]
+        if label == currentLabel:
             customers.append(row)
 
-    label, countClassLabelSet = countClassLabel(customers)
+    countClassLabelSet = countClassLabel(customers)
 
-    # find entropy of current element
+    # find entropy of current currentLabel
     entropy = 0
     for label in countClassLabelSet:
         entropy += calcEntropy(countClassLabelSet[label], len(customers))
 
-    print("entropy of element(label)", element, "is", entropy)
+    print("entropy of currentLabel(label)", currentLabel, "is", entropy)
     return entropy
 
 # Find Entropy of log base 2
-
-
 def calcEntropy(numerator, denominator):
     entropy = (-1)*(numerator/denominator)*(math.log2(numerator/denominator))
     return entropy
 
 # Find entropy for current Attricute
-
-
 def calcEntropyAttributes(numerator, denominator, entropyEle):
     entropy = (numerator/denominator)*entropyEle
     return entropy
 
 # find number of H&L Risk in dataset
-
-
-def countClassLabel(array):
+def countClassLabel(trainSet):
     countClassLabel = {}
-    classLabel = 0
-    for row in array:
-        label = row[classLabel]
+    riskColumn = 0
+    for row in trainSet:
+        label = row[riskColumn]
         if label not in countClassLabel:
             countClassLabel[label] = 0
         countClassLabel[label] += 1
 
-    return label, countClassLabel
+    return countClassLabel
 
 # Find Entropy of S
-
-
-def findEntropy_S(array):
+def findEntropy_S(trainSet):
     entropyS = 0
-    label, countClassLabelSet = countClassLabel(array)
-    for label in countClassLabelSet:
-        print("Risk", label, "has", countClassLabelSet[label], "customers")
-        entropyS += calcEntropy(countClassLabelSet[label], len(array))
+    countClassLabelDict = countClassLabel(trainSet)
+    for label in countClassLabelDict:
+        print("Risk", label, "has", countClassLabelDict[label], "customers")
+        entropyS += calcEntropy(countClassLabelDict[label], len(trainSet))
 
     print("Entorpy of S is", entropyS)
     print("----------------------------")
     return entropyS
 
 # find best attribute as a node
-
-
 def findNode(trainset):
     entropyS = findEntropy_S(trainset)
     nodeAttri = ""
     highestGain = 0
-    i = 1
-    while i < len(header):
+    if entropyS == 0:
+        nodeAttri = "RISK"
+        return nodeAttri
+
+    i = 1 # i=0 is Risk column
+    while i < len(header): #itterate attri column
         print("Attribute of", header[i])
         atriEntropy = findEntropyAttri(i, trainSet)
         Gain = entropyS - atriEntropy
@@ -144,13 +133,13 @@ def findNode(trainset):
 
 def nodeData(trainSet):
     node = findNode(trainSet)
-    print("select", node, "as a node")
+    print("<<<========== select", node, "as a node ==========>>>")
     attriRemove = header.index(node)
     count = {}
     final = []
     for row in trainSet:
         label = row[attriRemove]
-        if str(label) not in str(count):
+        if str(label) not in count:
             count[str(label)] = 0
         count[str(label)] += 1
 
@@ -165,13 +154,14 @@ def nodeData(trainSet):
 
 
 newBranches = nodeData(trainSet)
+currentTrainSet = trainSet.copy()
 newTrainSet = []
 headerCopy = header.copy()
 for label in newBranches[1]:
     print(int(label))
-    for row in trainSet:
-        element = row[headerCopy.index(newBranches[0])]
-        if int(label) == element:
+    for row in currentTrainSet:
+        currentLabel = row[headerCopy.index(newBranches[0])]
+        if int(label) == currentLabel:
             row = np.delete(row, headerCopy.index(newBranches[0]))
             newTrainSet.append(row)
 
@@ -180,5 +170,4 @@ for label in newBranches[1]:
         header.remove(newBranches[0])
     print(header)
     nodeData(newTrainSet)
-
     newTrainSet.clear()
