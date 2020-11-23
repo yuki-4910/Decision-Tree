@@ -2,16 +2,16 @@ import numpy as np
 import json
 import math
 
-# dataSet = np.loadtxt('../data/test.txt')
-# dataSet = dataSet.astype(int)
+dataSet = np.loadtxt('../data/train.txt')
+dataSet = dataSet.astype(int)
 
-dataSet = np.array([
-    [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-    [3, 3, 3, 1, 3, 3, 1, 1, 3, 3, 3, 1],
-    [2, 1, 1, 2, 2, 2, 2, 1, 2, 2, 1, 2],
-    [2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 1, 2],
-    [2, 3, 2, 3, 2, 2, 3, 3, 1, 2, 3, 1],
-    [2, 2, 1, 1, 2, 1, 1, 2, 2, 2, 2, 2]])
+# dataSet = np.array([
+#     [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+#     [3, 3, 3, 1, 3, 3, 1, 1, 3, 3, 3, 1],
+#     [2, 1, 1, 2, 2, 2, 2, 1, 2, 2, 1, 2],
+#     [2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 1, 2],
+#     [2, 3, 2, 3, 2, 2, 3, 3, 1, 2, 3, 1],
+#     [2, 2, 1, 1, 2, 1, 1, 2, 2, 2, 2, 2]])
 
 with open('../data/deDomain.txt') as f:
     domain = json.load(f)
@@ -203,6 +203,7 @@ def buildTree(trainSet, header, result):
                 if int(label) == currentLabel:
                     row = np.delete(row, headerCopy.index(newNode.attriName))
                     newTrainSet.append(row)
+            print(newTrainSet)
 
             if newBranches[0] == "RISK":
                 leaf = TreeNode("RISK", {"1": None})
@@ -218,49 +219,54 @@ def buildTree(trainSet, header, result):
             if newNode.attriName in header:
                 header.remove(newNode.attriName)
 
-            if len(clLabel) == 1: #current trainSet has same RISK label
+            if len(clLabel) == 1:  # current trainSet has same RISK label
                 labelV = 0
                 for x in clLabel:
                     labelV = x
                 leaf = TreeNode("RISK", {str(labelV): None})
                 newNode.add_child(leaf, label)
-                print ("Leaf node is", leaf.attriName, ",", leaf.children)
-                print ("Updated node is", newNode.attriName, ",", newNode.children)
+                print("Leaf node is", leaf.attriName, ",", leaf.children)
+                print("Updated node is", newNode.attriName,
+                      ",", newNode.children)
+
+            elif len(newTrainSet[0]) == 2 and len(clLabel) != 1:
+                leaf = TreeNode("RISK", {"1": None})
+                newNode.add_child(leaf, label)
+
             else:
-                print(newTrainSet)
                 print(header)
                 childNode, result = buildTree(newTrainSet, header, result)
                 newNode.add_child(childNode, label)
                 if label in newNode.children:
                     temp = TreeNode(newNode.attriName, newNode.children)
-                    temp.children[label] = childNode.attriName
+                    temp.children[label] = [
+                        childNode.attriName, childNode.children]
                     print ("Updated node is", temp.attriName, ",", temp.children)
 
-            print(newTrainSet)
             newTrainSet.clear()
             print(header)
+            header = headerCopy.copy()
             print(newNode.attriName, " , ", newNode.children)
         else:
             return
     result.insert(0, [newNode.attriName, newNode.children])
-    return newNode, result 
+    return newNode, result
+
 
 result = []
 tree, result = buildTree(dataSet, headerConstant, result)
-print (result)
+print("result is ", result[0])
 
 
-# def printTree(node, result):
-#     result.append({node.attriName: node.children})
-#     print( node.attriName, ", ", node.children, "in ptTree")
-#     for child in node.children:
-#         if node.children[child] != 1 and node.children[child] != 2:
-#             printTree(node.children[child], result)
-#             return result
+# def printTree(node, final):
+#     # result.append({node.attriName: node.children})
+#     for child in node[0][1]:
+#         if node[0][1][child] != 1 and node[0][1][child] != 2:
+#             final.append({node[0][0]: node[0][1][child]})
+#     return final
 
-# result = []
-# finalResult = printTree(tree, result)
-# print (finalResult)
+# final = printTree(result, final)
+# print (final)
 
 with open('../data/random.txt', 'w') as f:
-    json.dump(result, f)
+    json.dump(result[0], f)
