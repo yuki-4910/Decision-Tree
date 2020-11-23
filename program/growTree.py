@@ -2,7 +2,7 @@ import numpy as np
 import json
 import math
 
-dataSet = np.loadtxt('../data/train.txt')
+dataSet = np.loadtxt('../data/test.txt')
 dataSet = dataSet.astype(int)
 
 # dataSet = np.array([
@@ -252,21 +252,12 @@ def buildTree(trainSet, header, result):
     result.insert(0, [newNode.attriName, newNode.children])
     return newNode, result
 
+def main():
+    result = []
+    tree, result = buildTree(dataSet, headerConstant, result)
+    print("result is ", result[0])
 
-result = []
-tree, result = buildTree(dataSet, headerConstant, result)
-print("result is ", result[0])
+    with open('../data/random.txt', 'w') as f:
+        json.dump(result[0], f)
 
-
-# def printTree(node, final):
-#     # result.append({node.attriName: node.children})
-#     for child in node[0][1]:
-#         if node[0][1][child] != 1 and node[0][1][child] != 2:
-#             final.append({node[0][0]: node[0][1][child]})
-#     return final
-
-# final = printTree(result, final)
-# print (final)
-
-with open('../data/random.txt', 'w') as f:
-    json.dump(result[0], f)
+main()

@@ -11,6 +11,7 @@ def predict(tr, r, li):
             if a[0] == li[i][0]:
                 break
         a = a[1][str(r[i-1])]
+    print(a)
     return a
 
 
@@ -141,3 +142,5 @@ def main(fname):
         json.dump(a,f)
     showIt('treeFilePruned.txt')
     return 'treeFilePruned.txt'
+
+main("random.txt")

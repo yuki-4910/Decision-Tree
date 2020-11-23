@@ -1,0 +1,20 @@
+CRED_HIS
+ !--good--AGE
+ !          !--senior--L
+ !          !--youth--L
+ !          !--mid_age--HEALTH
+ !                        !--normal--L
+ !                        !--poor--H
+ !--poor--AGE
+            !--youth--INCOME
+            !           !--low--RACE
+            !           !         !--black--L
+            !           !         !--white--L
+            !           !--high--H
+            !--senior--L
+            !--mid_age--RACE
+                          !--black--HEALTH
+                          !           !--poor--L
+                          !           !--normal--H
+                          !--white--H
+                          !--asian--H
