@@ -1,0 +1,42 @@
+CRED_HIS
+ !--good--RACE
+ !          !--asian--L
+ !          !--black--AGE
+ !          !           !--youth--L
+ !          !           !--senior--HEALTH
+ !          !           !            !--poor--L
+ !          !           !            !--normal--L
+ !          !           !--mid_age--L
+ !          !--white--AGE
+ !                      !--senior--L
+ !                      !--mid_age--INCOME
+ !                      !             !--high--L
+ !                      !             !--low--L
+ !                      !--youth--HEALTH
+ !                                  !--poor--L
+ !                                  !--normal--L
+ !--poor--AGE
+            !--senior--RACE
+            !            !--black--HEALTH
+            !            !           !--poor--L
+            !            !           !--normal--H
+            !            !--asian--HEALTH
+            !            !           !--normal--L
+            !            !           !--poor--L
+            !            !--white--HEALTH
+            !                        !--normal--L
+            !                        !--poor--H
+            !--mid_age--HEALTH
+            !             !--poor--RACE
+            !             !          !--white--L
+            !             !          !--black--L
+            !             !          !--asian--H
+            !             !--normal--RACE
+            !                          !--asian--L
+            !                          !--white--H
+            !                          !--black--H
+            !--youth--INCOME
+                        !--low--HEALTH
+                        !         !--normal--L
+                        !         !--poor--L
+                        !--high--H
